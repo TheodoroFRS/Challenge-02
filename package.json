@@ -1,0 +1,31 @@
+{
+  "name": "challenge-02",
+  "version": "1.0.0",
+  "description": "Desafio da semana VIII - Compass UOL",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon dist/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheodoroFRS/Challenge-02.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TheodoroFRS/Challenge-02/issues"
+  },
+  "homepage": "https://github.com/TheodoroFRS/Challenge-02#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.2.5",
+    "nodemon": "^2.0.22"
+  }
+}
+
