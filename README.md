@@ -1,6 +1,6 @@
-# Challenge-01
+# Challenge-02
 
-Desafio da semana IV - Compass UOL
+Desafio da semana VIII - Compass UOL
 
 Api de uma veterinária
 
