@@ -24,7 +24,7 @@ const TutorSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
-  zipCode: {
+  zip_code: {
     type: Number,
     required: true
   }
