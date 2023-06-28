@@ -1,154 +1,212 @@
 import express from "express";
 import Bdjson from "../bdjson/bdjson";
+const Tutors = require("../models/Tutor");
+const Pets = require("../models/Pet");
 
 export default class PetsController {
+  static findPets = async (req: express.Request, res: express.Response) => {
+    try {
+      const pets = await Pets.find({});
+      return res.status(200).json({ pets });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ error: true, code: 500, message: "Internal server error" });
+    }
+  };
+
+  static findPetId = async (req: express.Request, res: express.Response) => {
+    try {
+      const { id } = req.params;
+      const pets = await Pets.findById(id);
+
+      if (!pets) {
+        return res
+          .status(404)
+          .json({ error: true, code: 404, message: `No pet with id ${id}` });
+      }
+      return res.status(200).json(pets);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ error: true, code: 500, message: "Internal server error" });
+    }
+  };
+
   static createPet = async (req: express.Request, res: express.Response) => {
     try {
       const { tutorId } = req.params;
-      const tutor = Bdjson.findTutorId(tutorId);
+
+      const tutor = await Tutors.findById(tutorId);
 
       if (!tutor) {
-        return res
-          .status(404)
-          .json({ error: true, code: 404, message: "Tutor não encontrado" });
+        return res.status(404).json({
+          error: true,
+          code: 404,
+          message: `No tutor with id ${tutorId}`,
+        });
       }
 
       const { name, species, carry, weight, date_of_birth } = req.body;
 
       const errors = [];
+
       if (!name) {
-        errors.push({ name: "error", message: "Nome não informado" });
+        errors.push({ name: "error", message: "Not informed the name" });
       }
 
       if (!species) {
-        errors.push({ species: "error", message: "Espécie não informada" });
+        errors.push({ species: "error", message: "Not informed the species" });
       }
 
       if (!carry) {
-        errors.push({ carry: "error", message: "Porte não informada" });
+        errors.push({ carry: "error", message: "Not informed the carry" });
       }
 
       if (!weight) {
-        errors.push({ weight: "error", message: "Peso não informado" });
+        errors.push({ weight: "error", message: "Not informed the weight" });
       }
 
       if (!date_of_birth) {
-        errors.push({ date_of_birth: "error", message: "Data de nascimento não informada" });
+        errors.push({
+          date_of_birth: "error",
+          message: "Not informed the date of birth",
+        });
       }
 
       if (errors.length > 0) {
         return res.status(400).json(errors);
       }
 
+      const savePet = new Pets({
+        name,
+        species,
+        carry,
+        weight,
+        date_of_birth,
+      });
 
-        const newPet = {
-        id: Bdjson.minhaListaPet(tutorId) + 1,
-        name: name,
-        species: species,
-        carry: carry,
-        weight: weight,
-        date_of_birth: date_of_birth,
-      };
+      const newPet = await savePet.save();
 
-      Bdjson.createPet(tutorId, newPet);
       return res.status(201).json(newPet);
     } catch (error) {
       return res
         .status(500)
-        .json({ error: true, code: 500, message: "Erro interno no servidor" });
+        .json({ error: true, code: 500, message: "Internal server error" });
     }
   };
 
   static updatePet = async (req: express.Request, res: express.Response) => {
     try {
-      const { petId, tutorId } = req.params;// o petId vem como string do corpo da requisição
-      const petIdNumber: number = parseInt(petId); // fazendo isso corverto o "petId" para petIdNumber
+      const { petId, tutorId } = req.params; // o petId vem como string do corpo da requisição
+      //const petIdNumber: number = parseInt(petId); // fazendo isso corverto o "petId" para petIdNumber
       const { name, species, carry, weight, date_of_birth } = req.body;
 
-      const tutor = Bdjson.findTutorId(tutorId);
+      const tutor = await Tutors.findById(tutorId);
 
       if (!tutor) {
+        return res.status(404).json({
+          error: true,
+          code: 404,
+          message: `No tutor with id ${tutorId}`,
+        });
+      }
+
+      const pets = await Pets.findById(petId);
+
+      if (!pets) {
         return res
           .status(404)
-          .json({ error: true, code: 404, message: "Tutor não encontrado" });
-      }
-      
-      const pet = Bdjson.findPetId(tutorId, petId);
-      if (!pet) {
-        return res.status(404).json({ error: true, code: 404, message: "Pet não encontrado" });
+          .json({ error: true, code: 404, message: `No pet with id ${petId}` });
       }
 
       const errors = [];
+
       if (!name) {
-        errors.push({ name: "error", message: "Nome não informado" });
+        errors.push({ name: "error", message: "Not informed the name" });
       }
 
       if (!species) {
-        errors.push({ species: "error", message: "Espécie não informada" });
+        errors.push({ species: "error", message: "Not informed the species" });
       }
 
       if (!carry) {
-        errors.push({ carry: "error", message: "Raça não informada" });
+        errors.push({ carry: "error", message: "Not informed the carry" });
       }
 
       if (!weight) {
-        errors.push({ weight: "error", message: "Peso não informado" });
+        errors.push({ weight: "error", message: "Not informed the weight" });
       }
 
       if (!date_of_birth) {
-        errors.push({ date_of_birth: "error", message: "Data de nascimento não informada" });
+        errors.push({
+          date_of_birth: "error",
+          message: "Not informed the date of birth",
+        });
       }
 
       if (errors.length > 0) {
         return res.status(400).json(errors);
       }
 
-      const updatePet = {
-        id: petIdNumber,
-        name: name,
-        species: species,
-        carry: carry,
-        weight: weight,
-        date_of_birth: date_of_birth,
-      };
+      const updatePet = await Pets.findByIdAndUpdate(
+        petId,
+        {
+          name,
+          species,
+          carry,
+          weight,
+          date_of_birth,
+        },
+        { new: true }
+      );
 
-      Bdjson.updatePet(tutorId, petId, updatePet);
+      if (!updatePet) {
+        return res.status(404).json({
+          error: true,
+          code: 404,
+          message: `No pet with no uptadetado id ${petId}`,
+        });
+      }
 
       return res.status(200).json(updatePet);
     } catch (error) {
       return res
         .status(500)
-        .json({ error: true, code: 500, message: "Erro interno no servidor" });
+        .json({ error: true, code: 500, message: "Internal server error"  });
     }
   };
 
-
   static deletePet = async (req: express.Request, res: express.Response) => {
     try {
+
       const { petId, tutorId } = req.params;
 
-      const tutor = Bdjson.findTutorId(tutorId);
+      const tutor = await Tutors.findById(tutorId);
 
       if (!tutor) {
-        return res.status(404).json({ error: true, code: 404, message: "Tutor não encontrado" });
+        return res.status(404).json({
+          error: true,
+          code: 404,
+          message: `No tutor with id ${tutorId}`,
+        });
       }
-
-      const pet = Bdjson.findPetId(tutorId, petId);
       
-      if (!pet) {
-        return res.status(404).json({ error: true, code: 404, message: "Pet não encontrado" });
+      const petRemovido = await Pets.findByIdAndRemove(petId);
+      
+      if (!petRemovido) {
+        return res
+          .status(404)
+          .json({ error: true, code: 404, message: `No pet with id ${petId}` });
       }
 
-      Bdjson.deletePet(tutorId, petId);
-
-      return res.status(200).json({ message: `Pet id:${petId} do tutor id:${tutorId} foi deletado com sucesso` });
-
-      } catch (error) {
-      console.log(error);
+      return res.status(200).json({
+        message: `status code 204 / Pet with id:${petId} , from tutor with id:${tutorId}, was success deleted`,
+      });
+    } catch (error) {
       return res
         .status(500)
-        .json({ error: true, code: 500, message: "Erro interno no servidor" });
+        .json({ error: true, code: 500, message: "Internal server error" });
     }
-  }
-
+  };
 }

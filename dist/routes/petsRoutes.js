@@ -7,6 +7,8 @@ const express_1 = __importDefault(require("express"));
 const PetsController_1 = __importDefault(require("../controllers/PetsController"));
 const router = express_1.default.Router();
 router
+    .get("/pets", PetsController_1.default.findPets)
+    .get("/pets/:id", PetsController_1.default.findPetId)
     .post("/pets/:tutorId", PetsController_1.default.createPet)
     .put("/pets/:petId/tutor/:tutorId", PetsController_1.default.updatePet)
     .delete("/pets/:petId/tutor/:tutorId", PetsController_1.default.deletePet);
