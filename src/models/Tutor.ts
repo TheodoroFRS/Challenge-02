@@ -1,5 +1,10 @@
 import mongoose from "mongoose";
 
+
+
+
+
+
 const TutorSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -27,8 +32,8 @@ const TutorSchema = new mongoose.Schema({
   zip_code: {
     type: Number,
     required: true
-  }
-
+  },
+  pets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Pet' }],
 });
 
 

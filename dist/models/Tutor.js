@@ -31,6 +31,7 @@ const TutorSchema = new mongoose_1.default.Schema({
     zip_code: {
         type: Number,
         required: true
-    }
+    },
+    pets: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Pet' }],
 });
 module.exports = mongoose_1.default.model("Tutor", TutorSchema);

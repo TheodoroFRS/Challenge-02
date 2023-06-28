@@ -11,5 +11,7 @@ router
     .get("/tutors/:id", TutorController_1.default.findTutorId)
     .post("/tutors", TutorController_1.default.createTutor)
     .put("/tutors/:id", TutorController_1.default.updateTutor)
-    .delete("/tutors/:id", TutorController_1.default.deleteTutor);
+    .delete("/tutors/:id", TutorController_1.default.deleteTutor)
+    .patch('/tutors/pet/:id', TutorController_1.default.addPet)
+    .patch('/pets/:petId/tutor/:tutorId', TutorController_1.default.removepet);
 exports.default = router;
