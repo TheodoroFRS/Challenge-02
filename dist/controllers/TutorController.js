@@ -162,11 +162,11 @@ TutorController.addPet = (req, res) => __awaiter(void 0, void 0, void 0, functio
         //return await PermisMiddleware(req, res, async () => {
         const { id } = req.params;
         const updateData = req.body;
-        const pet = yield Pets.findById(updateData);
+        const pet = yield Pets.findById(updateData.pets);
         if (!pet) {
             return res
                 .status(404)
-                .json({ error: true, code: 404, message: `No pet with id ${updateData}` });
+                .json({ error: true, code: 404, message: `No pet with id ${updateData.pets}` });
         }
         const tutorAtualizado = yield Tutors.findByIdAndUpdate(id, { $push: { pets: updateData.pets } }, { new: true });
         if (!tutorAtualizado) {

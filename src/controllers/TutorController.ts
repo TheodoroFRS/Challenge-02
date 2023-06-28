@@ -181,11 +181,11 @@ export default class TutorController {
       const { id } = req.params;
       const updateData = req.body;
 
-      const pet = await Pets.findById(updateData);
+      const pet = await Pets.findById(updateData.pets);
       if (!pet) {
         return res
           .status(404)
-          .json({ error: true, code: 404, message: `No pet with id ${updateData}` });
+          .json({ error: true, code: 404, message: `No pet with id ${updateData.pets}` });
       }
 
       const tutorAtualizado = await Tutors.findByIdAndUpdate(
