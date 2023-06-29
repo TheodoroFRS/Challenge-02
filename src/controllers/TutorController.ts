@@ -1,6 +1,5 @@
 import express from "express";
 const Tutors = require("../models/Tutor");
-const Pets = require("../models/Pet");
 
 export default class TutorController {
   static findTutors = async (req: express.Request, res: express.Response) => {
@@ -154,6 +153,21 @@ export default class TutorController {
     try {
       const { id } = req.params;
 
+      const tutor = await Tutors.findById(id);
+      if (!tutor) {
+        return res
+          .status(404)
+          .json({ error: true, code: 404, message: `No tutor with id ${id}` });
+      }
+
+      if (tutor.pets.length === 0) {
+
+          //continia pro resto do código 
+
+      } else {
+        return res.json({ message: `It is not possible to delete the tutor with one or more pets associated with it.` });
+      }
+      
       const tutorRemovido = await Tutors.findByIdAndRemove(id);
 
       if (!tutorRemovido) {
@@ -162,81 +176,9 @@ export default class TutorController {
           .json({ error: true, code: 404, message: `No tutor with id ${id}` });
       }
 
-      return res
-        .status(200)
-        .json({
-          message: `status code 204 / Tutor with id:${id} was success deleted`,
-        });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ error: true, code: 500, message: "Internal server error" });
-    }
-  };
-
-  static addPet = async (req: express.Request, res: express.Response) => {
-    try {
-      //return await PermisMiddleware(req, res, async () => {
-
-      const { id } = req.params;
-      const updateData = req.body;
-
-      const pet = await Pets.findById(updateData.pets);
-      if (!pet) {
-        return res
-          .status(404)
-          .json({ error: true, code: 404, message: `No pet with id ${updateData.pets}` });
-      }
-
-      const tutorAtualizado = await Tutors.findByIdAndUpdate(
-        id,
-        { $push: { pets: updateData.pets } },
-        { new: true }
-      );
-
-      if (!tutorAtualizado) {
-        return res
-          .status(404)
-          .json({ error: true, code: 404, message: `No tutor with id ${id}` });
-      }
-
-      return res.status(200).json(tutorAtualizado);
-
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ error: true, code: 500, message: "Internal server error" });
-    }
-  };
-
-  static removepet = async (req: express.Request, res: express.Response) => {
-    try {
-      //return await PermisMiddleware(req, res, async () => {
-      console.log("0");
-      const { petId, tutorId } = req.params;
-
-      console.log("1");
-
-      const pet = await Pets.findById(petId);
-      if (!pet) {
-        return res
-          .status(404)
-          .json({ error: true, code: 404, message: `No pet with id ${petId}` });
-      }
-      console.log("2");
-      const tutorAtualizado = await Tutors.findByIdAndUpdate(
-        tutorId,
-        { $pull: { pets: petId } },
-        { new: true }
-      );
-      console.log("3");
-      if (!tutorAtualizado) {
-        return res
-          .status(404)
-          .json({ error: true, code: 404, message: `No tutor with id ${tutorId}` });
-      }
-      console.log("4");
-      return res.status(200).json(tutorAtualizado);
+      return res.status(200).json({
+        message: `status code 204 / Tutor with id:${id} was success deleted`,
+      });
 
     } catch (error) {
       return res

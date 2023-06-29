@@ -85,6 +85,12 @@ PetsController.createPet = (req, res) => __awaiter(void 0, void 0, void 0, funct
             date_of_birth,
         });
         const newPet = yield savePet.save();
+        const tutorAtualizado = yield Tutors.findByIdAndUpdate(tutorId, { $push: { pets: newPet } }, { new: true });
+        if (!tutorAtualizado) {
+            return res
+                .status(404)
+                .json({ error: true, code: 404, message: `error updating tutor with id ${tutorId}` });
+        }
         return res.status(201).json(newPet);
     }
     catch (error) {
@@ -95,8 +101,7 @@ PetsController.createPet = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 PetsController.updatePet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { petId, tutorId } = req.params; // o petId vem como string do corpo da requisição
-        //const petIdNumber: number = parseInt(petId); // fazendo isso corverto o "petId" para petIdNumber
+        const { petId, tutorId } = req.params;
         const { name, species, carry, weight, date_of_birth } = req.body;
         const tutor = yield Tutors.findById(tutorId);
         if (!tutor) {
@@ -145,7 +150,7 @@ PetsController.updatePet = (req, res) => __awaiter(void 0, void 0, void 0, funct
             return res.status(404).json({
                 error: true,
                 code: 404,
-                message: `No pet with no uptadetado id ${petId}`,
+                message: `error updating pet with id ${tutorId}`,
             });
         }
         return res.status(200).json(updatePet);
@@ -166,6 +171,12 @@ PetsController.deletePet = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 code: 404,
                 message: `No tutor with id ${tutorId}`,
             });
+        }
+        const tutorAtualizado = yield Tutors.findByIdAndUpdate(tutorId, { $pull: { pets: petId } }, { new: true });
+        if (!tutorAtualizado) {
+            return res
+                .status(404)
+                .json({ error: true, code: 404, message: `error updating tutor with id ${tutorId}` });
         }
         const petRemovido = yield Pets.findByIdAndRemove(petId);
         if (!petRemovido) {

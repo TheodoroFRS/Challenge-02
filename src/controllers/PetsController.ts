@@ -88,7 +88,20 @@ export default class PetsController {
 
       const newPet = await savePet.save();
 
+      const tutorAtualizado = await Tutors.findByIdAndUpdate(
+        tutorId,
+        { $push: { pets: newPet } },
+        { new: true }        
+      );
+
+      if (!tutorAtualizado) {
+        return res
+          .status(404)
+          .json({ error: true, code: 404, message: `error updating tutor with id ${tutorId}` });
+      }
+
       return res.status(201).json(newPet);
+      
     } catch (error) {
       return res
         .status(500)
@@ -98,10 +111,10 @@ export default class PetsController {
 
   static updatePet = async (req: express.Request, res: express.Response) => {
     try {
-      const { petId, tutorId } = req.params; // o petId vem como string do corpo da requisição
-      //const petIdNumber: number = parseInt(petId); // fazendo isso corverto o "petId" para petIdNumber
-      const { name, species, carry, weight, date_of_birth } = req.body;
+      const { petId, tutorId } = req.params;
 
+      const { name, species, carry, weight, date_of_birth } = req.body;
+      
       const tutor = await Tutors.findById(tutorId);
 
       if (!tutor) {
@@ -165,7 +178,7 @@ export default class PetsController {
         return res.status(404).json({
           error: true,
           code: 404,
-          message: `No pet with no uptadetado id ${petId}`,
+          message: `error updating pet with id ${tutorId}`,
         });
       }
 
@@ -173,13 +186,12 @@ export default class PetsController {
     } catch (error) {
       return res
         .status(500)
-        .json({ error: true, code: 500, message: "Internal server error"  });
+        .json({ error: true, code: 500, message: "Internal server error" });
     }
   };
 
   static deletePet = async (req: express.Request, res: express.Response) => {
     try {
-
       const { petId, tutorId } = req.params;
 
       const tutor = await Tutors.findById(tutorId);
@@ -191,9 +203,21 @@ export default class PetsController {
           message: `No tutor with id ${tutorId}`,
         });
       }
-      
+
+      const tutorAtualizado = await Tutors.findByIdAndUpdate(
+        tutorId,
+        { $pull: { pets: petId } },
+        { new: true }        
+      );
+
+      if (!tutorAtualizado) {
+        return res
+          .status(404)
+          .json({ error: true, code: 404, message: `error updating tutor with id ${tutorId}` });
+      }
+
       const petRemovido = await Pets.findByIdAndRemove(petId);
-      
+
       if (!petRemovido) {
         return res
           .status(404)
@@ -201,7 +225,7 @@ export default class PetsController {
       }
 
       return res.status(200).json({
-        message: `status code 204 / Pet with id:${petId} , from tutor with id:${tutorId}, was success deleted`,
+       message: `status code 204 / Pet with id:${petId} , from tutor with id:${tutorId}, was success deleted`,
       });
     } catch (error) {
       return res

@@ -9,6 +9,6 @@ router
 
   .post("/pets/:tutorId", PetsController.createPet)
   .put("/pets/:petId/tutor/:tutorId", PetsController.updatePet)
-  .delete("/pets/:petId/tutor/:tutorId", PetsController.deletePet);
+  .delete("/pets/:petId/tutor/:tutorId",PetsController.deletePet)
 
 export default router;
