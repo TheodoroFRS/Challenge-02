@@ -1,5 +1,4 @@
 import express from "express";
-import Bdjson from "../bdjson/bdjson";
 const Tutors = require("../models/Tutor");
 const Pets = require("../models/Pet");
 

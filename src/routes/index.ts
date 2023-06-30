@@ -6,7 +6,7 @@ import auth from "./authRoutes";
 const routes = (app: express.Express) => {
 
     app.route("/").get((req: express.Request, res: express.Response) => {
-        res.status(200).json({message: `Api Challenge #02`})
+        res.status(200).redirect("/docs")
       })
 
     app.use(

@@ -1,22 +1,13 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 const Tutors = require("../models/Tutor");
 class TutorController {
 }
 _a = TutorController;
-TutorController.findTutors = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+TutorController.findTutors = async (req, res) => {
     try {
-        const tutors = yield Tutors.find({}).select('-password');
+        const tutors = await Tutors.find({}).select('-password');
         return res.status(200).json({ tutors });
     }
     catch (error) {
@@ -25,11 +16,11 @@ TutorController.findTutors = (req, res) => __awaiter(void 0, void 0, void 0, fun
             .status(500)
             .json({ error: true, code: 500, message: "Internal server error" });
     }
-});
-TutorController.findTutorId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+TutorController.findTutorId = async (req, res) => {
     try {
         const { id } = req.params;
-        const tutor = yield Tutors.findById(id).select('-password');
+        const tutor = await Tutors.findById(id).select('-password');
         if (!tutor) {
             return res
                 .status(404)
@@ -42,8 +33,8 @@ TutorController.findTutorId = (req, res) => __awaiter(void 0, void 0, void 0, fu
             .status(500)
             .json({ error: true, code: 500, message: "Internal server error" });
     }
-});
-TutorController.createTutor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+TutorController.createTutor = async (req, res) => {
     try {
         const { name, password, phone, email, date_of_birth, zip_code } = req.body;
         const erros = [];
@@ -71,7 +62,7 @@ TutorController.createTutor = (req, res) => __awaiter(void 0, void 0, void 0, fu
         if (erros.length > 0) {
             return res.status(400).json(erros);
         }
-        if (yield Tutors.findOne({ email })) {
+        if (await Tutors.findOne({ email })) {
             return res
                 .status(400)
                 .json({ error: true, code: 400, message: "already existing email" });
@@ -84,7 +75,7 @@ TutorController.createTutor = (req, res) => __awaiter(void 0, void 0, void 0, fu
             date_of_birth,
             zip_code,
         });
-        const newTutor = yield tutorSave.save();
+        const newTutor = await tutorSave.save();
         return res.status(201).json(newTutor);
     }
     catch (error) {
@@ -92,8 +83,8 @@ TutorController.createTutor = (req, res) => __awaiter(void 0, void 0, void 0, fu
             .status(500)
             .json({ error: true, code: 500, message: "Internal server error" });
     }
-});
-TutorController.updateTutor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+TutorController.updateTutor = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, phone, email, date_of_birth, zip_code } = req.body;
@@ -119,7 +110,7 @@ TutorController.updateTutor = (req, res) => __awaiter(void 0, void 0, void 0, fu
         if (erros.length > 0) {
             return res.status(400).json(erros);
         }
-        const updateTutor = yield Tutors.findByIdAndUpdate(id, {
+        const updateTutor = await Tutors.findByIdAndUpdate(id, {
             name,
             phone,
             email,
@@ -138,11 +129,11 @@ TutorController.updateTutor = (req, res) => __awaiter(void 0, void 0, void 0, fu
             .status(500)
             .json({ error: true, code: 500, message: "Internal server error" });
     }
-});
-TutorController.deleteTutor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+TutorController.deleteTutor = async (req, res) => {
     try {
         const { id } = req.params;
-        const tutor = yield Tutors.findById(id);
+        const tutor = await Tutors.findById(id);
         if (!tutor) {
             return res
                 .status(404)
@@ -154,7 +145,7 @@ TutorController.deleteTutor = (req, res) => __awaiter(void 0, void 0, void 0, fu
         else {
             return res.json({ message: `It is not possible to delete the tutor with one or more pets associated with it.` });
         }
-        const tutorRemovido = yield Tutors.findByIdAndRemove(id);
+        const tutorRemovido = await Tutors.findByIdAndRemove(id);
         if (!tutorRemovido) {
             return res
                 .status(404)
@@ -169,5 +160,5 @@ TutorController.deleteTutor = (req, res) => __awaiter(void 0, void 0, void 0, fu
             .status(500)
             .json({ error: true, code: 500, message: "Internal server error" });
     }
-});
+};
 exports.default = TutorController;
