@@ -1,6 +1,7 @@
 import express from "express";
 import tutors from "./tutorsRoutes"
 import pets from "./petsRoutes"
+import auth from "./authRoutes";
 
 const routes = (app: express.Express) => {
 
@@ -10,8 +11,8 @@ const routes = (app: express.Express) => {
 
     app.use(
         tutors,
-        pets
-        
+        pets,
+        auth
     )
 }
 

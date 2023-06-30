@@ -4,7 +4,7 @@ const Tutors = require("../models/Tutor");
 export default class TutorController {
   static findTutors = async (req: express.Request, res: express.Response) => {
     try {
-      const tutors = await Tutors.find({});
+      const tutors = await Tutors.find({}).select('-password');
       return res.status(200).json({ tutors });
     } catch (error) {
       console.log(error);
@@ -17,7 +17,7 @@ export default class TutorController {
   static findTutorId = async (req: express.Request, res: express.Response) => {
     try {
       const { id } = req.params;
-      const tutor = await Tutors.findById(id);
+      const tutor = await Tutors.findById(id).select('-password');
 
       if (!tutor) {
         return res
@@ -34,12 +34,16 @@ export default class TutorController {
 
   static createTutor = async (req: express.Request, res: express.Response) => {
     try {
-      const { name, phone, email, date_of_birth, zip_code } = req.body;
+      const { name,password, phone, email, date_of_birth, zip_code } = req.body;
 
       const erros = [];
 
       if (!name) {
         erros.push({ name: "error", message: "Not informed the name" });
+      }
+
+      if (!password) {
+        erros.push({ name: "error", message: "Not informed the password" });
       }
 
       if (!phone) {
@@ -73,6 +77,7 @@ export default class TutorController {
 
       const tutorSave = new Tutors({
         name,
+        password,
         phone,
         email,
         date_of_birth,

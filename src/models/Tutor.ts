@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
+const bcrypt = require('bcrypt');
 
+ 
 const TutorSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -7,6 +9,7 @@ const TutorSchema = new mongoose.Schema({
     maxlength: 50,
     minlength: 3,
   },
+  password: { type: String, required: true, minlength: 6 },
   phone: {
     type: String,
     required: true,
@@ -32,5 +35,18 @@ const TutorSchema = new mongoose.Schema({
 
 });
 
+
+TutorSchema.pre("save", async function () {
+  //   // console.log(this.modifiedPaths());
+  //   // console.log(this.isModified('name'));
+  //   if (!this.isModified('password')) return;
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+TutorSchema.methods.comparePassword = async function (canditatePassword: any) {
+  const isMatch = await bcrypt.compare(canditatePassword, this.password);
+  return isMatch;
+};
 
 module.exports = mongoose.model("Tutor", TutorSchema);

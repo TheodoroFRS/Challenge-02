@@ -16,7 +16,7 @@ class TutorController {
 _a = TutorController;
 TutorController.findTutors = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const tutors = yield Tutors.find({});
+        const tutors = yield Tutors.find({}).select('-password');
         return res.status(200).json({ tutors });
     }
     catch (error) {
@@ -29,7 +29,7 @@ TutorController.findTutors = (req, res) => __awaiter(void 0, void 0, void 0, fun
 TutorController.findTutorId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const tutor = yield Tutors.findById(id);
+        const tutor = yield Tutors.findById(id).select('-password');
         if (!tutor) {
             return res
                 .status(404)
@@ -45,10 +45,13 @@ TutorController.findTutorId = (req, res) => __awaiter(void 0, void 0, void 0, fu
 });
 TutorController.createTutor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, phone, email, date_of_birth, zip_code } = req.body;
+        const { name, password, phone, email, date_of_birth, zip_code } = req.body;
         const erros = [];
         if (!name) {
             erros.push({ name: "error", message: "Not informed the name" });
+        }
+        if (!password) {
+            erros.push({ name: "error", message: "Not informed the password" });
         }
         if (!phone) {
             erros.push({ phone: "error", message: "Not informed the phone" });
@@ -75,6 +78,7 @@ TutorController.createTutor = (req, res) => __awaiter(void 0, void 0, void 0, fu
         }
         const tutorSave = new Tutors({
             name,
+            password,
             phone,
             email,
             date_of_birth,
