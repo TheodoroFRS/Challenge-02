@@ -232,4 +232,5 @@ export default class PetsController {
         .json({ error: true, code: 500, message: "Internal server error" });
     }
   };
+  
 }

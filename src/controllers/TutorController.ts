@@ -5,9 +5,14 @@ export default class TutorController {
   static findTutors = async (req: express.Request, res: express.Response) => {
     try {
       const tutors = await Tutors.find({}).select('-password');
+
+      if (tutors.totalDocs === 0) {
+        return res.status(404).json({ error: true, code: 404, message: "Tutors not found" });
+      }
+
       return res.status(200).json({ tutors });
+
     } catch (error) {
-      console.log(error);
       return res
         .status(500)
         .json({ error: true, code: 500, message: "Internal server error" });
@@ -170,7 +175,7 @@ export default class TutorController {
           //continia pro resto do código 
 
       } else {
-        return res.json({ message: `It is not possible to delete the tutor with one or more pets associated with it.` });
+        return res.status(403).json({ message: `It is not possible to delete the tutor with one or more pets associated with it.` });
       }
       
       const tutorRemovido = await Tutors.findByIdAndRemove(id);
