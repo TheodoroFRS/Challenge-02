@@ -1,6 +1,39 @@
 import mongoose from "mongoose";
 const bcrypt = require('bcrypt');
 
+const SinglePetSchema = new mongoose.Schema({
+  petId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Pet',
+    required: true,
+  },
+  name: {
+    type: String,
+    required: [true, "Please provide name"],
+    maxlength: 50,
+    minlength: 3,
+  },
+  species: {
+    type: String,
+    maxlength: 50,
+    minlength: 1,
+    required: true
+  },
+  carry: {
+    type: String,
+    enum: ['p', 'm', 'g'],
+    required: true
+  },
+  weight: {
+    type: Number,
+    required: true
+  },
+  date_of_birth: {
+    type: Date,
+    required: true
+  }
+});
+
  
 const TutorSchema = new mongoose.Schema({
   name: {
@@ -31,7 +64,7 @@ const TutorSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  pets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Pet' }],
+  pets: [SinglePetSchema],
 
 });
 

@@ -7,7 +7,9 @@ export default class PetsController {
     try {
       const pets = await Pets.find({});
       if (pets.totalDocs === 0) {
-        return res.status(404).json({ error: true, code: 404, message: "Pets not found" });
+        return res
+          .status(404)
+          .json({ error: true, code: 404, message: "Pets not found" });
       }
       return res.status(200).json({ pets });
     } catch (error) {
@@ -28,6 +30,7 @@ export default class PetsController {
           .json({ error: true, code: 404, message: `No pet with id ${id}` });
       }
       return res.status(200).json(pets);
+      
     } catch (error) {
       return res
         .status(500)
@@ -93,17 +96,20 @@ export default class PetsController {
       const tutorAtualizado = await Tutors.findByIdAndUpdate(
         tutorId,
         { $push: { pets: newPet } },
-        { new: true }        
+        { new: true }
       );
 
       if (!tutorAtualizado) {
         return res
           .status(400)
-          .json({ error: true, code: 400, message: `error updating tutor with id ${tutorId}` });
+          .json({
+            error: true,
+            code: 400,
+            message: `error updating tutor with id ${tutorId}`,
+          });
       }
 
       return res.status(201).json(newPet);
-      
     } catch (error) {
       return res
         .status(500)
@@ -116,7 +122,7 @@ export default class PetsController {
       const { petId, tutorId } = req.params;
 
       const { name, species, carry, weight, date_of_birth } = req.body;
-      
+
       const tutor = await Tutors.findById(tutorId);
 
       if (!tutor) {
@@ -164,6 +170,7 @@ export default class PetsController {
         return res.status(400).json(errors);
       }
 
+
       const updatePet = await Pets.findByIdAndUpdate(
         petId,
         {
@@ -174,15 +181,35 @@ export default class PetsController {
           date_of_birth,
         },
         { new: true }
-      );
+        );
+        
+        if (!updatePet) {
+          return res.status(404).json({
+            error: true,
+            code: 404,
+            message: `error updating pet with id ${tutorId}`,
+          });
+        }
 
-      if (!updatePet) {
-        return res.status(404).json({
-          error: true,
-          code: 404,
-          message: `error updating pet with id ${tutorId}`,
-        });
-      }
+        const index = tutor.pets.findIndex((pet: any) => pet.id === petId);
+  
+        tutor.pets[index] = updatePet;
+        
+        const updateTutorPet = await Tutors.findByIdAndUpdate(
+          tutorId,
+          { $set: { pets: tutor.pets } },
+          { new: true }
+        );
+  
+        if (!updateTutorPet) {
+          return res
+            .status(404)
+            .json({
+              error: true,
+              code: 404,
+              message: `error updating pet, tutor with id ${tutorId}`,
+            });
+        }
 
       return res.status(200).json(updatePet);
     } catch (error) {
@@ -206,16 +233,24 @@ export default class PetsController {
         });
       }
 
+      const index = tutor.pets.findIndex((pet: any) => pet.id === petId);
+
+      const del = tutor.pets.splice(index, 1);
+
       const tutorAtualizado = await Tutors.findByIdAndUpdate(
         tutorId,
-        { $pull: { pets: petId } },
-        { new: true }        
+        { $pull: { pets: del[0] } },
+        { new: true }
       );
 
       if (!tutorAtualizado) {
         return res
           .status(404)
-          .json({ error: true, code: 404, message: `error updating tutor with id ${tutorId}` });
+          .json({
+            error: true,
+            code: 404,
+            message: `error updating tutor with id ${tutorId}`,
+          });
       }
 
       const petRemovido = await Pets.findByIdAndRemove(petId);
@@ -227,7 +262,7 @@ export default class PetsController {
       }
 
       return res.status(200).json({
-       message: `Pet with id:${petId} , from tutor with id:${tutorId}, was success deleted`,
+        message: `Pet with id:${petId} , from tutor with id:${tutorId}, was success deleted`,
       });
     } catch (error) {
       return res
@@ -235,5 +270,4 @@ export default class PetsController {
         .json({ error: true, code: 500, message: "Internal server error" });
     }
   };
-  
 }

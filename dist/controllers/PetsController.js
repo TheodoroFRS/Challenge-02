@@ -10,7 +10,9 @@ PetsController.findPets = async (req, res) => {
     try {
         const pets = await Pets.find({});
         if (pets.totalDocs === 0) {
-            return res.status(404).json({ error: true, code: 404, message: "Pets not found" });
+            return res
+                .status(404)
+                .json({ error: true, code: 404, message: "Pets not found" });
         }
         return res.status(200).json({ pets });
     }
@@ -83,7 +85,11 @@ PetsController.createPet = async (req, res) => {
         if (!tutorAtualizado) {
             return res
                 .status(400)
-                .json({ error: true, code: 400, message: `error updating tutor with id ${tutorId}` });
+                .json({
+                error: true,
+                code: 400,
+                message: `error updating tutor with id ${tutorId}`,
+            });
         }
         return res.status(201).json(newPet);
     }
@@ -147,6 +153,18 @@ PetsController.updatePet = async (req, res) => {
                 message: `error updating pet with id ${tutorId}`,
             });
         }
+        const index = tutor.pets.findIndex((pet) => pet.id === petId);
+        tutor.pets[index] = updatePet;
+        const updateTutorPet = await Tutors.findByIdAndUpdate(tutorId, { $set: { pets: tutor.pets } }, { new: true });
+        if (!updateTutorPet) {
+            return res
+                .status(404)
+                .json({
+                error: true,
+                code: 404,
+                message: `error updating pet, tutor with id ${tutorId}`,
+            });
+        }
         return res.status(200).json(updatePet);
     }
     catch (error) {
@@ -166,11 +184,17 @@ PetsController.deletePet = async (req, res) => {
                 message: `No tutor with id ${tutorId}`,
             });
         }
-        const tutorAtualizado = await Tutors.findByIdAndUpdate(tutorId, { $pull: { pets: petId } }, { new: true });
+        const index = tutor.pets.findIndex((pet) => pet.id === petId);
+        const del = tutor.pets.splice(index, 1);
+        const tutorAtualizado = await Tutors.findByIdAndUpdate(tutorId, { $pull: { pets: del[0] } }, { new: true });
         if (!tutorAtualizado) {
             return res
                 .status(404)
-                .json({ error: true, code: 404, message: `error updating tutor with id ${tutorId}` });
+                .json({
+                error: true,
+                code: 404,
+                message: `error updating tutor with id ${tutorId}`,
+            });
         }
         const petRemovido = await Pets.findByIdAndRemove(petId);
         if (!petRemovido) {
