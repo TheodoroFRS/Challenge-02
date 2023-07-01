@@ -9,6 +9,9 @@ _a = PetsController;
 PetsController.findPets = async (req, res) => {
     try {
         const pets = await Pets.find({});
+        if (pets.totalDocs === 0) {
+            return res.status(404).json({ error: true, code: 404, message: "Pets not found" });
+        }
         return res.status(200).json({ pets });
     }
     catch (error) {
@@ -79,8 +82,8 @@ PetsController.createPet = async (req, res) => {
         const tutorAtualizado = await Tutors.findByIdAndUpdate(tutorId, { $push: { pets: newPet } }, { new: true });
         if (!tutorAtualizado) {
             return res
-                .status(404)
-                .json({ error: true, code: 404, message: `error updating tutor with id ${tutorId}` });
+                .status(400)
+                .json({ error: true, code: 400, message: `error updating tutor with id ${tutorId}` });
         }
         return res.status(201).json(newPet);
     }
@@ -176,7 +179,7 @@ PetsController.deletePet = async (req, res) => {
                 .json({ error: true, code: 404, message: `No pet with id ${petId}` });
         }
         return res.status(200).json({
-            message: `status code 204 / Pet with id:${petId} , from tutor with id:${tutorId}, was success deleted`,
+            message: `Pet with id:${petId} , from tutor with id:${tutorId}, was success deleted`,
         });
     }
     catch (error) {

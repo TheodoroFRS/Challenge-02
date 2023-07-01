@@ -187,7 +187,7 @@ export default class TutorController {
       }
 
       return res.status(200).json({
-        message: `status code 204 / Tutor with id:${id} was success deleted`,
+        message: `Tutor with id:${id} was success deleted`,
       });
 
     } catch (error) {

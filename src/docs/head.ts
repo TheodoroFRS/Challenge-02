@@ -9,7 +9,7 @@ const swaggerOptions = {
       servers: [
         {
           url: 'http://localhost:3000',
-          description: "Api - clínica veterinária",
+          description: "Api - Clínica Veterinária",
         },
       ],
       components: {

@@ -74,7 +74,7 @@ const AuthMiddleware_1 = __importDefault(require("../middlewares/AuthMiddleware"
  *             name: "Theo"
  *             password: "secret"
  *             phone: "40028922"
- *             email: "Theo.doro@compasso.com"
+ *             email: "Theodoro@compasso.com"
  *             date_of_birth: "2023-12-12 10: 10"
  *             zip_code: 12345678
  *     responses:
@@ -123,7 +123,7 @@ const AuthMiddleware_1 = __importDefault(require("../middlewares/AuthMiddleware"
  *           example:
  *             name: "Theodoro"
  *             phone: "40028922"
- *             email: "Theo.doro@compasso.com"
+ *             email: "Theodoro@compasso.com"
  *             date_of_birth: "2023-12-12 10: 10"
  *             zip_code: 12345678
  *     responses:
@@ -147,7 +147,7 @@ const AuthMiddleware_1 = __importDefault(require("../middlewares/AuthMiddleware"
  *         description: ID do tutor
  *     responses:
  *       200:
- *         description: status code 204 / Tutor was success deleted
+ *         description: Tutor was success deleted
  *       401:
  *         description: Authentication Invalid, not authorized
  *       403:

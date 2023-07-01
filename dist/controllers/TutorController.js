@@ -154,7 +154,7 @@ TutorController.deleteTutor = async (req, res) => {
                 .json({ error: true, code: 404, message: `No tutor with id ${id}` });
         }
         return res.status(200).json({
-            message: `status code 204 / Tutor with id:${id} was success deleted`,
+            message: `Tutor with id:${id} was success deleted`,
         });
     }
     catch (error) {
