@@ -1,21 +1,21 @@
-# Challenge-01
+# Challenge-02
 
-Desafio da semana IV - Compass UOL
+Desafio da semana VIII - Compass UOL
 
-Api de uma veterinária
+Api de uma Clínica Veterinária
 
 ## Rodando localmente
 
 Clone o projeto
 
 ```bash
-  git clone https://github.com/TheodoroFRS/Challenge-01.git
+  git clone https://github.com/TheodoroFRS/Challenge-02.git
 ```
 
 Entre no diretório do projeto
 
 ```bash
-  cd Challenge-01/
+  cd Challenge-02/
 ```
 
 Instale as dependências
@@ -27,443 +27,373 @@ Instale as dependências
 Inicie o servidor
 
 ```bash
-  npm run start
+  npm start
 ```
 
-## Postman
+Acesse:  http://localhost:3000
 
-#### Retorna todos os tutores
+ 
+
+## Documentação da API
+
+
+### Login
 
 ```http
-  GET http://localhost:3000/tutors
+  POST /auth
+```
+
+ Exemplo:
+```http
+{
+  "email": "Theo.doro@compasso.com",
+  "password": "secret"
+}
 ```
 
 Retorno:
 ```http
-  [
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0OWU0ZGFlMTM1YzA2MmJhY2JhZWU0YyIsImlhdCI6MTY4ODI0MjY2NiwiZXhwIjoxNjg4MzI5MDY2fQ.sCC-PAYVfZXFZyf4yOhxBW7cD6MDTMndZBaER16Ix2M"
+}
+```
+
+se não passar valores válidos 
+```http
+Invalid email or password
+```
+
+### Tutor
+
+#### Retorna todos os tutores
+
+```http
+  GET /tutors
+```
+
+Retorno:
+```http
+{
+  "tutors": [
     {
-        "id": 1,
-        "name": "Jonh Doe",
-        "phone": "85989323895",
-        "email": "jose.abreu@compasso.com",
-        "date_of_birth": "1993-12-12 10:10",
-        "zip_code": "61760000",
-        "pets": [
-            {
-                "id": 1,
-                "name": "Lilo",
-                "species": "dog",
-                "carry": "p",
-                "weight": 5,
-                "date_of_birth": "1993-12-12 10:10"
-            }
-        ]
+      "_id": "649e4dae135c062bacbaee4c",
+      "name": "TheoDoro"
+      "phone": "40028922",
+      "email": "Theo.doro@compasso.com",
+      "date_of_birth": "2023-12-12T14:10:00.000Z",
+      "zip_code": 12345678,
+      "pets": [
+        {
+          "name": "stitch",
+          "species": "cat",
+          "carry": "m",
+          "weight": 6,
+          "date_of_birth": "1993-12-12T13:10:00.000Z",
+          "_id": "64a08f09294f1bc8f15be5cf"
+        }
+      ],
+      "__v": 0
     }
-]
+  ]
+}
+```
+
+Autenticação necessária
+
+se não autenticado
+```http
+{
+  "error": true,
+  "code": 401,
+  "message": "Authentication Invalid, not authorized"
+}
 ```
 
 #### Criar um novo tutor.
 
 ```http
-  POST http://localhost:3000/tutors
+  POST /tutors
 ```
  Exemplo:
 ```http
-  {
-    "name": "Theo",
-    "phone": "40028922",
-    "email": "Theo.doro@compasso.com",
-    "date_of_birth": "2023-12-12 10: 10",
-    "zip_code": "12345678"
-  }
+{
+  "name": "Theo",
+  "password": "secret",
+  "phone": "40028922",
+  "email": "Theodoro@compasso.com",
+  "date_of_birth": "2023-12-12 10: 10",
+  "zip_code": 12345678
+}
 ```
 Retorno: 
 ```http
 {
-    "id": 2,
-    "name": "Theo",
-    "phone": "40028922",
-    "email": "Theo.doro@compasso.com",
-    "date_of_birth": "2023-12-12 10: 10",
-    "zip_code": "12345678",
-    "pets": []
+  "name": "Theo",
+  "password": "$2b$10$zNJttzSYTz4nfY.qhapL8OJ4bwHCAowba5Tq24W6bI2cNJG0946yO",
+  "phone": "40028922",
+  "email": "Theodoro@compasso.com",
+  "date_of_birth": "2023-12-12T14:10:00.000Z",
+  "zip_code": 12345678,
+  "_id": "64a08fc8294f1bc8f15be5e6",
+  "pets": [],
+  "__v": 0
 }
 ```
+
+
 
 #### Retorna o tutor por id
 
 ```http
-  GET http://localhost:3000/tutors/2
+  GET /tutors/{id}
 ```
 Retorno: 
 ```http
 {
-    "id": 2,
-    "name": "Theo",
-    "phone": "40028922",
-    "email": "Theo.doro@compasso.com",
-    "date_of_birth": "2023-12-12 10: 10",
-    "zip_code": "12345678",
-    "pets": []
+  "_id": "64a08fc8294f1bc8f15be5e6",
+  "name": "Theo",
+  "phone": "40028922",
+  "email": "Theodoro@compasso.com",
+  "date_of_birth": "2023-12-12T14:10:00.000Z",
+  "zip_code": 12345678,
+  "pets": [],
+  "__v": 0
+}
+```
+
+Autenticação necessária
+
+se não autenticado
+```http
+{
+  "error": true,
+  "code": 401,
+  "message": "Authentication Invalid, not authorized"
 }
 ```
 
 #### Atualiza o tutor por id
 
 ```http
-  PUT http://localhost:3000/tutors/2
+  PUT /tutors/{id}
 ```
  Exemplo:
 ```http
 {
-    "name": "Theodoro",
-    "phone": "40028922",
-    "email": "Theo.doro@compasso.com",
-    "date_of_birth": "2023-12-12 10: 10",
-    "zip_code": "12345678"
+  "name": "Theodoro",
+  "phone": "40028922",
+  "email": "Theodoro@compasso.com",
+  "date_of_birth": "2023-12-12 10: 10",
+  "zip_code": 12345678
 }
 ```
 Retorno: 
 ```http
 {
-    "id": 2,
-    "name": "Theodoro",
-    "phone": "40028922",
-    "email": "Theo.doro@compasso.com",
-    "date_of_birth": "2023-12-12 10: 10",
-    "zip_code": "12345678",
-    "pets": []
+  "_id": "64a08fc8294f1bc8f15be5e6",
+  "name": "Theodoro",
+  "password": "$2b$10$zNJttzSYTz4nfY.qhapL8OJ4bwHCAowba5Tq24W6bI2cNJG0946yO",
+  "phone": "40028922",
+  "email": "Theodoro@compasso.com",
+  "date_of_birth": "2023-12-12T14:10:00.000Z",
+  "zip_code": 12345678,
+  "pets": [],
+  "__v": 0
 }
 ```
 
-#### Cria um animal de estimação e o adiciona a um tutor.
+
+#### Deleta o tutor por id
 
 ```http
-  POST http://localhost:3000/pets/2
+  DELETE /tutors/{id}
+```
+Retorno:
+```http
+{
+  "message": "Tutor with id:64a08fc8294f1bc8f15be5e6 was success deleted"
+}
+```
+Autenticação necessária
+
+se não autenticado
+```http
+{
+  "error": true,
+  "code": 401,
+  "message": "Authentication Invalid, not authorized"
+}
+```
+
+se não ainda houver animais de estimação associados ao tutor
+```http
+{
+  "message": "It is not possible to delete the tutor with one or more pets associated with it."
+}
+```
+
+### Pet
+
+#### Retorna todos os pets
+
+```http
+  GET /pets
+```
+
+Retorno:
+```http
+{
+  "pets": [
+    {
+      "_id": "64a08f09294f1bc8f15be5cf",
+      "name": "stitch",
+      "species": "cat",
+      "carry": "m",
+      "weight": 6,
+      "date_of_birth": "1993-12-12T13:10:00.000Z",
+      "__v": 0
+    }
+  ]
+}
+```
+
+Autenticação necessária
+
+se não autenticado
+```http
+{
+  "error": true,
+  "code": 401,
+  "message": "Authentication Invalid, not authorized"
+}
+```
+
+#### Cria um animal de estimação e o adiciona ao tutor.
+
+```http
+  POST /pets/{id}
 ```
  Exemplo:
 ```http
-      {
-        "name": "lilo",
-        "species": "dog",
-        "carry": "p",
-        "weight": 5,
-        "date_of_birth": "1993-12-12 10:10"
-      }
+{
+  "name": "lilo",
+  "species": "dog",
+  "carry": "p",
+  "weight": 5,
+  "date_of_birth": "1993-12-12 10:10"
+}
 ```
 
 Retorno: 
 ```http
 {
-    "id": 1,
-    "name": "lilo",
-    "species": "dog",
-    "carry": "p",
-    "weight": 5,
-    "date_of_birth": "1993-12-12 10:10"
+  "name": "lilo",
+  "species": "dog",
+  "carry": "p",
+  "weight": 5,
+  "date_of_birth": "1993-12-12T13:10:00.000Z",
+  "_id": "64a09a5fa9f3feb531b59132",
+  "__v": 0
 }
 ```
+
+Autenticação necessária
+
+se não autenticado
+```http
+{
+  "error": true,
+  "code": 401,
+  "message": "Authentication Invalid, not authorized"
+}
+```
+
+#### Retorna o pet por id
+
+```http
+  GET /pets/{id}
+```
+Retorno: 
+```http
+{
+  "_id": "64a09a5fa9f3feb531b59132",
+  "name": "lilo",
+  "species": "dog",
+  "carry": "p",
+  "weight": 5,
+  "date_of_birth": "1993-12-12T13:10:00.000Z",
+  "__v": 0
+}
+```
+
+Autenticação necessária
+
+se não autenticado
+```http
+{
+  "error": true,
+  "code": 401,
+  "message": "Authentication Invalid, not authorized"
+}
+```
+
 
 #### Atualiza as informações de um animal de estimação de um tutor.
 
 ```http
-  PUT http://localhost:3000/pets/1/tutor/2
+  PUT /pets/{petId}/tutor/{tutorId}
 ```
  Exemplo:
 ```http
 {
-    "name": "stitch",
-    "species": "cat",
-    "carry": "p",
-    "weight": 5,
-    "date_of_birth": "1993-12-12 10:10"
+  "name": "stitch",
+  "species": "cat",
+  "carry": "m",
+  "weight": 6,
+  "date_of_birth": "1993-12-12 10:10"
 }
 ```
 Retorno: 
 ```http
 {
-    "id": 1,
-    "name": "stitch",
-    "species": "cat",
-    "carry": "p",
-    "weight": 5,
-    "date_of_birth": "1993-12-12 10:10"
+  "_id": "64a09a5fa9f3feb531b59132",
+  "name": "stitch",
+  "species": "cat",
+  "carry": "m",
+  "weight": 6,
+  "date_of_birth": "1993-12-12T13:10:00.000Z",
+  "__v": 0
+}
+```
+Autenticação necessária
+
+se não autenticado
+```http
+{
+  "error": true,
+  "code": 401,
+  "message": "Authentication Invalid, not authorized"
 }
 ```
 
 #### Deleta um animal de estimação de um tutor.
 
 ```http
- delete http://localhost:3000/pets/1/tutor/2
+  DELETE /pets/{petId}/tutor/{tutorId}
 ```
 Retorno:
 ```http
 {
-    "message": "Pet id:1 do tutor id:2 foi deletado com sucesso"
+  "message": "Pet with id:64a09a5fa9f3feb531b59132 , from tutor with id:64a08fc8294f1bc8f15be5e6, was success deleted"
 }
 ```
+Autenticação necessária
 
-#### Deleta o tutor por id
-
-```http
- delete http://localhost:3000/tutors/2
-```
-Retorno:
+se não autenticado
 ```http
 {
-    "message": "Tutor id:2 foi deletado com sucesso"
-}
-```
-
-## Validações
-
-### Exemplos do tutor
-
-
-#### Se criar um novo tutor sem nome.
-```http
-  POST http://localhost:3000/tutors
-```
- Exemplo:
-```http
-  {
-      /*"name": "Theo",*/
-    "phone": "40028922",
-    "email": "Theo.doro@compasso.com",
-    "date_of_birth": "2023-12-12 10: 10",
-    "zip_code": "12345678"
-  }
-```
-Retorno: 
-```http
-[
-    {
-        "name": "error",
-        "message": "Nome não informado"
-    }
-]
-```
-
-#### Se criar um novo tutor sem nome e sem CEP.
-
-```http
-  POST http://localhost:3000/tutors
-```
- Exemplo:
-```http
-{
-    /*"name": "Theo",*/
-    "phone": "40028922",
-    "email": "Theo.doro@compasso.com",
-    "date_of_birth": "2023-12-12 10: 10"        /* ,
-    "zip_code": "12345678" */
-}
-```
-Retorno: 
-```http
-[
-    {
-        "name": "error",
-        "message": "Nome não informado"
-    },
-    {
-        "zip_code": "error",
-        "message": "CEP não informado"
-    }
-]
-```
-
-#### Se atualizar o tutor sem email.
-
-```http
-  PUT http://localhost:3000/tutors/2
-```
- Exemplo:
-```http
-{
-    "name": "Theodoro",
-    "phone": "40028922",
-      /* "email": "Theo.doro@compasso.com", */
-    "date_of_birth": "2023-12-12 10: 10",
-    "zip_code": "12345678"
-}
-```
-Retorno: 
-```http
-[
-    {
-        "email": "error",
-        "message": "Email não informado"
-    }
-]
-```
-#### Se atualizar o tutor sem email e sem data de nascimento.
-
-```http
-  PUT http://localhost:3000/tutors/2
-```
- Exemplo:
-```http
-{
-    "name": "Theodoro",
-    "phone": "40028922",
-    /* "email": "Theo.doro@compasso.com", 
-    "date_of_birth": "2023-12-12 10: 10",  */
-    "zip_code": "12345678"
-}
-```
-Retorno: 
-```http
-[
-    {
-        "email": "error",
-        "message": "Email não informado"
-    },
-    {
-        "email": "error",
-        "message": "Data de nascimento não informado"
-    }
-]
-```
-
-#### Se tentar deletar e não encontrar o id do tutor.
-```http
- delete http://localhost:3000/tutors/234567890
-```
-Retorno: 
-```http
-{
-    "error": true,
-    "code": 404,
-    "message": "Tutor não encontrado"
-}
-```
-
-### Exemplos do animal de estimação
-
-#### Se não encontrar o id do tutor no POST, PUT e no DELETE do pet.
-
-Retorno: 
-```http
-{
-    "error": true,
-    "code": 404,
-    "message": "Tutor não encontrado"
-}
-```
-
-#### Se criar um animal de estimação sem nome.
-
-```http
-  POST http://localhost:3000/pets/2
-```
- Exemplo:
-```http
-{
-    // "name": "lilo",
-    "species": "dog",
-    "carry": "p",
-    "weight": 5,
-    "date_of_birth": "1993-12-12 10:10"
-}
-```
-
-Retorno: 
-```http
-[
-    {
-        "name": "error",
-        "message": "Nome não informado"
-    }
-]
-```
-#### Se criar um animal de estimação sem especie.
-
-```http
-  POST http://localhost:3000/pets/2
-```
- Exemplo:
-```http
-{
-    "name": "lilo",
-    // "species": "dog",
-    "carry": "p",
-    "weight": 5,
-    "date_of_birth": "1993-12-12 10:10"
-}
-```
-
-Retorno: 
-```http
-[
-    {
-        "species": "error",
-        "message": "Espécie não informada"
-    }
-]
-```
-#### Se atualizar as informações de um animal de estimação sem a data de nascimento.
-
-```http
-  PUT http://localhost:3000/pets/1/tutor/2
-```
- Exemplo:
-```http
-{
-    "name": "stitch",
-    "species": "cat",
-    "carry": "p",
-    "weight": 5   /*,
-    "date_of_birth": "1993-12-12 10:10" */
-}
-```
-Retorno: 
-```http
-[
-    {
-        "date_of_birth": "error",
-        "message": "Data de nascimento não informada"
-    }
-]
-```
-#### Se atualizar as informações de um animal de estimação sem o peso e sem a data de nascimento.
-
-```http
-  PUT http://localhost:3000/pets/1/tutor/2
-```
- Exemplo:
-```http
-{
-    "name": "stitch",
-    "species": "cat",
-    "carry": "p"   /* ,
-    "weight": 5 ,
-    "date_of_birth": "1993-12-12 10:10" */
-}
-```
-Retorno: 
-```http
-[
-    {
-        "weight": "error",
-        "message": "Peso não informado"
-    },
-    {
-        "date_of_birth": "error",
-        "message": "Data de nascimento não informada"
-    }
-]
-```
-####  Se tentar deletar e não encontrar o id do animal de estimação.
-
-```http
- delete http://localhost:3000/pets/1234567890/tutor/2
-```
-Retorno:
-```http
-{
-    "error": true,
-    "code": 404,
-    "message": "Pet não encontrado"
+  "error": true,
+  "code": 401,
+  "message": "Authentication Invalid, not authorized"
 }
 ```

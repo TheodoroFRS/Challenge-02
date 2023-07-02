@@ -1,134 +1,166 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-const bdjson_1 = __importDefault(require("../bdjson/bdjson"));
+const Tutors = require("../models/Tutor");
 class TutorController {
 }
 _a = TutorController;
-TutorController.findTutors = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    return res.status(200).json(bdjson_1.default.findTutors());
-});
-TutorController.findTutorId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+TutorController.findTutors = async (req, res) => {
+    try {
+        const tutors = await Tutors.find({}).select('-password');
+        if (tutors.totalDocs === 0) {
+            return res.status(404).json({ error: true, code: 404, message: "Tutors not found" });
+        }
+        return res.status(200).json({ tutors });
+    }
+    catch (error) {
+        return res
+            .status(500)
+            .json({ error: true, code: 500, message: "Internal server error" });
+    }
+};
+TutorController.findTutorId = async (req, res) => {
     try {
         const { id } = req.params;
-        const tutor = bdjson_1.default.findTutorId(id);
+        const tutor = await Tutors.findById(id).select('-password');
         if (!tutor) {
-            return res.status(404).json({ error: true, code: 404, message: "Tutor não encontrado" });
+            return res
+                .status(404)
+                .json({ error: true, code: 404, message: `No tutor with id ${id}` });
         }
         return res.status(200).json(tutor);
     }
     catch (error) {
         return res
             .status(500)
-            .json({ error: true, code: 500, message: "Erro interno no servidor" });
+            .json({ error: true, code: 500, message: "Internal server error" });
     }
-});
-TutorController.createTutor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+TutorController.createTutor = async (req, res) => {
     try {
-        const { name, phone, email, date_of_birth, zip_code } = req.body;
+        const { name, password, phone, email, date_of_birth, zip_code } = req.body;
         const erros = [];
         if (!name) {
-            erros.push({ name: "error", message: "Nome não informado" });
+            erros.push({ name: "error", message: "Not informed the name" });
+        }
+        if (!password) {
+            erros.push({ name: "error", message: "Not informed the password" });
         }
         if (!phone) {
-            erros.push({ phone: "error", message: "Telefone não informado" });
+            erros.push({ phone: "error", message: "Not informed the phone" });
         }
         if (!email) {
-            erros.push({ email: "error", message: "Email não informado" });
+            erros.push({ email: "error", message: "Not informed the email" });
         }
         if (!date_of_birth) {
-            erros.push({ email: "error", message: "Data de nascimento não informado" });
+            erros.push({
+                email: "error",
+                message: "Not informed the date of birth",
+            });
         }
         if (!zip_code) {
-            erros.push({ zip_code: "error", message: "CEP não informado" });
+            erros.push({ zip_code: "error", message: "Not informed the zip code" });
         }
         if (erros.length > 0) {
             return res.status(400).json(erros);
         }
-        const newTutor = {
-            id: bdjson_1.default.minhaLista() + 1,
-            name: name,
-            phone: phone,
-            email: email,
-            date_of_birth: date_of_birth,
-            zip_code: zip_code,
-            pets: [],
-        };
-        bdjson_1.default.createTutor(newTutor);
+        if (await Tutors.findOne({ email })) {
+            return res
+                .status(400)
+                .json({ error: true, code: 400, message: "already existing email" });
+        }
+        const tutorSave = new Tutors({
+            name,
+            password,
+            phone,
+            email,
+            date_of_birth,
+            zip_code,
+        });
+        const newTutor = await tutorSave.save();
         return res.status(201).json(newTutor);
     }
     catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: true, code: 500, message: "Erro interno no servidor" });
+        return res
+            .status(500)
+            .json({ error: true, code: 500, message: "Internal server error" });
     }
-});
-TutorController.updateTutor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+TutorController.updateTutor = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, phone, email, date_of_birth, zip_code } = req.body;
-        const tutor = bdjson_1.default.findTutorId(id);
-        if (!tutor) {
-            return res.status(404).json({ error: true, code: 404, message: "Tutor não encontrado" });
-        }
         const erros = [];
         if (!name) {
-            erros.push({ name: "error", message: "Nome não informado" });
+            erros.push({ name: "error", message: "Not informed the name" });
         }
         if (!phone) {
-            erros.push({ phone: "error", message: "Telefone não informado" });
+            erros.push({ phone: "error", message: "Not informed the phone" });
         }
         if (!email) {
-            erros.push({ email: "error", message: "Email não informado" });
+            erros.push({ email: "error", message: "Not informed the email" });
         }
         if (!date_of_birth) {
-            erros.push({ email: "error", message: "Data de nascimento não informado" });
+            erros.push({
+                email: "error",
+                message: "Not informed the date of birth",
+            });
         }
         if (!zip_code) {
-            erros.push({ zip_code: "error", message: "CEP não informado" });
+            erros.push({ zip_code: "error", message: "Not informed the zip code" });
         }
         if (erros.length > 0) {
             return res.status(400).json(erros);
         }
-        const updateTutor = {
-            id: tutor.id,
-            name: name,
-            phone: phone,
-            email: email,
-            date_of_birth: date_of_birth,
-            zip_code: zip_code,
-            pets: tutor.pets,
-        };
-        bdjson_1.default.updateTutor(id, updateTutor);
-        return res.status(200).json(bdjson_1.default.findTutorId(id));
+        const updateTutor = await Tutors.findByIdAndUpdate(id, {
+            name,
+            phone,
+            email,
+            date_of_birth,
+            zip_code,
+        }, { new: true });
+        if (!updateTutor) {
+            return res
+                .status(404)
+                .json({ error: true, code: 404, message: `No tutor with id ${id}` });
+        }
+        return res.status(200).json(updateTutor);
     }
     catch (error) {
-        return res.status(500).json({ error: true, code: 500, message: "Erro interno no servidor" });
+        return res
+            .status(500)
+            .json({ error: true, code: 500, message: "Internal server error" });
     }
-});
-TutorController.deleteTutor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+TutorController.deleteTutor = async (req, res) => {
     try {
         const { id } = req.params;
-        const tutor = bdjson_1.default.findTutorId(id);
+        const tutor = await Tutors.findById(id);
         if (!tutor) {
-            return res.status(404).json({ error: true, code: 404, message: "Tutor não encontrado" });
+            return res
+                .status(404)
+                .json({ error: true, code: 404, message: `No tutor with id ${id}` });
         }
-        bdjson_1.default.deleteTutor(id);
-        return res.status(200).json({ message: `Tutor id:${id} foi deletado com sucesso` });
+        if (tutor.pets.length === 0) {
+            //continia pro resto do código 
+        }
+        else {
+            return res.status(403).json({ message: `It is not possible to delete the tutor with one or more pets associated with it.` });
+        }
+        const tutorRemovido = await Tutors.findByIdAndRemove(id);
+        if (!tutorRemovido) {
+            return res
+                .status(404)
+                .json({ error: true, code: 404, message: `No tutor with id ${id}` });
+        }
+        return res.status(200).json({
+            message: `Tutor with id:${id} was success deleted`,
+        });
     }
     catch (error) {
-        return res.status(500).json({ error: true, code: 500, message: "Erro interno no servidor" });
+        return res
+            .status(500)
+            .json({ error: true, code: 500, message: "Internal server error" });
     }
-});
+};
 exports.default = TutorController;
